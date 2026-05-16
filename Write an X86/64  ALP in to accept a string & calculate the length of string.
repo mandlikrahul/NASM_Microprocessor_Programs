@@ -1,0 +1,70 @@
+%macro RD 2 
+mov edx,%1 
+mov esi,%2 
+mov eax,0 
+mov edi,0 
+syscall  
+%endmacro 
+
+%macro WR 2 
+mov edx,%1 
+mov esi,%2 
+mov eax,1 
+mov edi,1 
+syscall 
+%endmacro 
+
+section .data 
+ msg db "enter string",0ah 
+ len equ $-msg 
+ msg1 db "length of string is:",0ah 
+ len1 equ $-msg1 
+
+section .bss 
+ string resb 15 
+ cnt resb 2 
+ num2 resb 4 
+ num1 resb 4 
+
+section .text
+ global _start: 
+ _start: 
+
+WR len,msg 
+ RD 12,string 
+ WR len1,msg1 
+ mov r8,string 
+ mov cl,0 
+
+ l1: mov bl,[r8] 
+    cmp bl,0x0a 
+    je l2 
+    inc cl 
+    inc r8 
+    jmp l1 
+ l2: 
+ mov [cnt],cl 
+ mov bl,[cnt] 
+ call display 
+ mov rax,60 
+ mov rdi,0 
+ syscall 
+
+display: 
+ mov ecx,2  mov edi,num1  l3: 
+ rol bl,4 
+ mov al,bl 
+ and al,0FH
+ cmp al,09H 
+ jbe l4 
+ add al,07H 
+  
+ l4: add al,30H 
+     mov [edi],al 
+     inc edi 
+     dec ecx 
+     jnz l3 
+     WR 2,num1 
+     ret 
+
+
