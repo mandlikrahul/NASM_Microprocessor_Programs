@@ -9,5 +9,25 @@ Syntax of Assembly Language Statements
     [label]     mnemonic       [operands]    [;comment]
 Eg:  L1:       mov rdx,len 	                  ; length of message
 
+The Hello World Program in Assembly:
+section .data
+msg db 'Hello World!',0AH
+len equ $-msg
+
+global _start
+_start:
+section .text 
+; display message.
+mov rdx,len 	; length of message
+mov rsi,msg 	; msg
+mov rdi,1	; sys_read
+mov rax,1 	; sys_write
+syscall		; exit 
+
+mov rax,60  ; exit code
+mov rbx,0
+syscall
+
+
 
 
