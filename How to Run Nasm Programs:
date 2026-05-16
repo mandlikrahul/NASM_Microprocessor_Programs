@@ -1,0 +1,8 @@
+Compiling and Linking an Assembly Program in NASM
+•	Type the above code using a text editor and save it as hello.nasm. 
+•	Make sure that you are in the same directory as where you saved hello.nasm. 
+•	To assemble the program, type nasm -f elf64 hello.nasm 
+•	If there is any error, you will be prompted about that at this stage. Otherwise an object file of your program named hello.o will be     created. 
+•	To link the object file and create an executable file named hello, 
+  type ld -o hello hello.o 
+•	Execute the program by typing ./hello 
