@@ -1,0 +1,13 @@
+# Introduction to Assembly Language Programming:
+Assembly language is a low-level programming language for a computer, or other programmable device specific to particular computer architecture in contrast to most high-level programming languages, which are generally portable across multiple systems. 
+Assembly language is converted into executable machine code by a utility program referred to as an assembler like NASM, MASM etc.
+An assembly program can be divided into three sections: 
+•	The data section: It contains data definitions of initialized data items. 
+•	The bss section : It contains temporary declared data/variables. 
+•	The text section: It contains actual code/machine instructions.
+Syntax of Assembly Language Statements
+    [label]     mnemonic       [operands]    [;comment]
+Eg:  L1:       mov rdx,len 	                  ; length of message
+
+
+
