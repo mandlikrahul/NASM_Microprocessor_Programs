@@ -1,0 +1,117 @@
+%macro RD 2
+mov edx ,%1
+mov esi,%2
+mov eax,0
+mov edi,0
+syscall
+%endmacro
+
+%macro WR 2
+mov edx ,%1
+mov esi,%2
+mov eax,1
+mov edi,1
+syscall
+%endmacro
+
+section .data
+blk db ' ',0xa
+lblk equ $-blk
+msg1 db 'Blocks Before Transfer',0xa
+lmsg1 equ $-msg1
+msg2 db 'Source Block=>'
+lmsg2 equ $-msg2
+msg3 db 'Destination BLock=>'
+lmsg3 equ $-msg3
+msg4 db 'Blocks After Transfer',0xa
+lmsg4 equ $-msg4
+srcblk db 01h,02h,03h,04h,05h,06h
+desblk db 00h,00h,00h,00h,00h,00h
+cnt equ 6
+
+section .bss
+num resb 2
+
+section .text
+ global _start
+ _start:
+
+ WR lblk,blk		;Blank Line msg
+ WR lmsg1,msg1		;Before Transfer msg
+ WR lmsg2,msg2		;Source Block msg
+ call SB		;Displaying Source Block
+
+ WR lblk,blk		;Blank Line msg
+ WR lmsg3,msg3		;Dest Block msg
+ call DB		;Displaying Dest Block
+
+ WR lblk,blk		;Blank Line msg
+ WR lmsg4,msg4		;After Transfer msg
+ WR lmsg2,msg2		;Source Block msg
+ call SB		;Displaying Source Block
+
+ WR lblk,blk		;Blank Line msg
+ WR lmsg3,msg3		;Dest Block msg
+
+ ;Transfer Logic
+ mov r8,srcblk		;r8->srcblk
+ mov r9,desblk		;r9->desblk
+ mov cl,cnt		;Move cnt to cl
+ L6:	mov al,[r8]
+	mov [r9],al	;Tranfer to Desblk
+	inc r8
+	inc r9		;Increment both Pointers
+	dec cl		;Decrement counter
+	jnz L6		;Jump to L6 until L6!=0
+	
+ call DB		;Displaying Dest Block
+ WR lblk,blk		;Last Blank Line
+
+ ;Terminate Program
+ mov eax,60
+ syscall
+
+SB:
+	mov r8,srcblk		;r8->srcblk
+	mov rcx,0
+	mov rcx,cnt		;Move cnt to rcx
+	
+	L1:	push rcx	;Push to Stack
+		  mov bl,[r8]	;Move to bl for Displaying
+	  	call Display	;call Display procedure
+		  inc r8		;Increment pointer
+	  	pop rcx		;Pop from Stack
+		  loop L1		;Goto L1 Label
+		  ret			;Return from Procedure
+	
+  DB:	mov r9,desblk		;r9->desblk
+	    mov rcx,0
+	    mov rcx,cnt		;Move cnt to rcx
+			L2:	push rcx	;Push to Stack
+		mov bl,[r9]	;Move to bl for Display
+		call Display	;call Display
+		inc r9		;Increment pointer
+		pop rcx		;Pop from Stack
+		loop L2		;Goto L2 Label
+		ret			;Return from Procedure
+
+Display:
+	mov ecx,2
+	mov edi,num
+	
+	L3:	rol bl,4
+		mov al,bl
+		and al,0FH
+		cmp al,09H
+		jbe L4
+		add al ,07H
+		
+	L4:	add al,30H
+		mov [edi],al
+		inc edi
+		dec ecx
+		jnz L3
+		WR 2,num
+	  ret	
+
+
