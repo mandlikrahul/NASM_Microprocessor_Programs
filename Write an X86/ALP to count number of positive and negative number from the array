@@ -1,0 +1,85 @@
+%macro RD 2
+mov edx,%1
+mov esi,%2
+mov eax,0
+mov edi,0
+syscall
+%endmacro
+
+%macro WR 2
+mov edx,%1
+mov esi,%2
+mov eax,1
+mov edi,1
+syscall
+%endmacro
+
+section .data
+arr dq 1234567895ABCDEFH,-1234567895ABCDEFH
+n equ 2
+pm db 'Positive Number Count:',0xa
+lpm equ $-pm
+nm db 'Negative Number Count:',0xa
+lnm equ $-nm
+
+section .bss
+num1 resb 14
+pcnt resb 10
+ncnt resb 10
+
+section .text
+	global _start:
+_start:
+	
+	mov rsi,arr
+	mov rdi,n
+	mov rbx,0
+	mov rcx,0
+	
+	l1:
+		mov rax,[rsi]
+    cmp rax,0000000000000000H
+		js neg
+		
+	pos:
+		inc rbx
+		jmp l2
+	neg:
+		inc rcx
+		
+	l2:
+		add rsi,8
+		dec rdi
+		jnz l1
+	
+	mov [pcnt],rbx
+	mov [ncnt],rcx
+	
+	WR lpm,pm
+	mov rax,[pcnt]
+	call Display
+	WR lnm,nm
+	mov rbx,[ncnt]
+	call Display
+	
+	mov rax,60
+	syscall
+	
+	
+	
+Display:
+	mov ecx,2	
+	mov edi,num1		
+l3:	rol bl,4	
+	  mov al,bl	
+  	and al,0FH	
+	  cmp al,09H	
+  	jbe l4
+  	add al,07H	
+l4:	add al,30H	
+  	mov [edi],al	
+  	inc edi		
+  	dec ecx		
+  	jnz l3	
+  	WR 14,num1
+    ret
